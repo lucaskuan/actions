@@ -12,6 +12,7 @@ Parameters:
   ListenerRulePriority:
     Type: Number
     Description: Unique number from 1 to 50000 to represent rule priority in listener
+    Default: 10
   ECSClusterName:
     Type: String
     Description: ECS Cluster that we are going to add service into

@@ -46,7 +46,7 @@ jobs:
     # - run: sh ./prepare_cfn.sh
     # - run: cat cfn.yml
     - name: Create PR ECS stack
-      run: aws cloudformation create-stack --stack-name $(git rev-parse --short HEAD) --template-body ./cfn.yml
+      run: aws cloudformation create-stack --stack-name test-pr-ecs-$(git rev-parse --short HEAD) --template-body ./cfn.yml --parameters ParameterKey=GitSHA,ParameterValue=$(git rev-parse --short HEAD)
 
   redeploy:
     needs: [test, build]
@@ -65,6 +65,8 @@ jobs:
         sudo ./aws/install
     - name: Reload ECS service
       run: git rev-parse --short HEAD
+    - run: $(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }') 
+    - run: $((echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }') % 20)
   
   teardown:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' 
@@ -81,4 +83,4 @@ jobs:
         unzip awscliv2.zip
         sudo ./aws/install
     - name: Remove PR ECS stack
-      run: aws cloudformation delete-stack --stack-name $(git rev-parse --short HEAD)
+      run: aws cloudformation delete-stack --stack-name test-pr-ecs-$(git rev-parse --short HEAD)

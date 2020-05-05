@@ -39,7 +39,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-    - run: echo Lallalalalalalal
+    - uses: actions/checkout@v2
     - name: AWS CLI
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -49,4 +49,21 @@ jobs:
       run: aws --version
     - name: Create ELB target group
       run: git rev-parse --short HEAD
-      run: aws elbv2 describe-rules --listener-arn arn:aws:elasticloadbalancing:us-west-2:993316282153:listener/app/ed-web-Elb-K5SDEGBIWZP3/dc382608ece43558/79885aaf58de3ff8
+  
+  teardown:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' 
+    runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: "us-west-2"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+    - uses: actions/checkout@v2
+    - run: git rev-parse --short HEAD
+    - name: AWS CLI
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+    # - name: check cli version
+    #   run: aws cloudformation delete-stack --stack-name xxx

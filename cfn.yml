@@ -29,7 +29,7 @@ Resources:
         - Field: host-header
           HostHeaderConfig:
             Values:
-              - pr3-staging.workstream.is
+              - pr-__GIT_SHA__.workstream.is
       ListenerArn: arn:aws:elasticloadbalancing:us-west-2:993316282153:listener/app/ed-web-Elb-K5SDEGBIWZP3/dc382608ece43558/79885aaf58de3ff8 # TODO: Replace with script
       Priority: 6 # TODO: Replace with script, need to be unique from 1 - 50000
 
@@ -40,6 +40,7 @@ Resources:
       - TargetGroup
     Properties:
       Cluster: staging # TODO: Replace with script
+      ServiceName: __GIT_SHA__
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:

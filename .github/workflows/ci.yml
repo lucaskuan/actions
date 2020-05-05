@@ -8,12 +8,14 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
+    if: github.event.action != 'closed' 
     runs-on: ubuntu-latest
     steps:
       - run: echo Testing....
       - run: echo something after failed
   # This workflow contains a single job called "build"
   build:
+    if: github.event.action == 'closed' 
     needs: test
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -32,7 +34,7 @@ jobs:
       # run: sh ./new_commit.sh
   deploy:
     needs: [test, build]
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' 
     runs-on: ubuntu-latest
     env:
       AWS_DEFAULT_REGION: "us-west-2"
@@ -47,8 +49,10 @@ jobs:
         sudo ./aws/install
     - name: check cli version
       run: aws --version
-    - name: Create ELB target group
-      run: git rev-parse --short HEAD
+    - run: sh ./prepare_cfn.sh
+    - run: cat cfn.yml
+    # - name: Create PR ECS stack
+      # run: aws cloudformation create-stack --stack-name $(git rev-parse --short HEAD)
   
   teardown:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' 
@@ -59,11 +63,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
     - uses: actions/checkout@v2
-    - run: git rev-parse --short HEAD
     - name: AWS CLI
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
         sudo ./aws/install
-    # - name: check cli version
-    #   run: aws cloudformation delete-stack --stack-name xxx
+    - name: Remove PR ECS stack
+      run: aws cloudformation delete-stack --stack-name $(git rev-parse --short HEAD)

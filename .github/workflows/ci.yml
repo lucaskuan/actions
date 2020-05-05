@@ -65,8 +65,10 @@ jobs:
         sudo ./aws/install
     - name: Reload ECS service
       run: git rev-parse --short HEAD
-    - run: $(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }') 
-    - run: $((echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }') % 20)
+    - run: |
+        export NUM=$(echo $(git rev-list --count HEAD) % 200 | bc)
+        echo "::set-env name=NUMA::$NUM"
+    - run: echo ${{env.NUMA}}
   
   teardown:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' 

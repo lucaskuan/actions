@@ -49,9 +49,11 @@ jobs:
       #   unzip awscliv2.zip
       #   sudo ./aws/install
       uses: cyberonin/awscli-action@master
+    - name: check cli version
+      run: aws --version
+    - name: try command
       env:
         AWS_DEFAULT_REGION: "us-east-1"
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws --version
+      run: aws elbv2 describe-rules --listener-arn arn:aws:elasticloadbalancing:us-west-2:993316282153:listener/app/ed-web-Elb-K5SDEGBIWZP3/dc382608ece43558/79885aaf58de3ff8

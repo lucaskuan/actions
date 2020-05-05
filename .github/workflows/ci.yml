@@ -34,6 +34,10 @@ jobs:
     needs: test
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: "us-east-1"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
     - run: echo Lallalalalalalal
     - name: AWS CLI
@@ -44,8 +48,4 @@ jobs:
     - name: check cli version
       run: aws --version
     - name: try command
-      env:
-        AWS_DEFAULT_REGION: "us-east-1"
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: aws elbv2 describe-rules --listener-arn arn:aws:elasticloadbalancing:us-west-2:993316282153:listener/app/ed-web-Elb-K5SDEGBIWZP3/dc382608ece43558/79885aaf58de3ff8

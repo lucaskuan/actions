@@ -1,9 +1,5 @@
-# This is a basic workflow to help you get started with Actions
+name: Test and deploy
 
-name: CI
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
   pull_request:
@@ -32,10 +28,8 @@ jobs:
       run: echo Hello, world!
 
     # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+    # - name: Run a multi-line script
+      # run: sh ./new_commit.sh
   deploy:
     needs: test
     if: github.event_name == 'pull_request'
@@ -43,10 +37,9 @@ jobs:
     steps:
       - run: echo Lallalalalalalal
       - name: Load balancer
-        uses: ItsKarma/aws-cli@v1.70.0
-        with:
-          args: elbv2 describe-rules
+        uses: chrislennon/action-aws-cli@v1.1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      - run: aws --version

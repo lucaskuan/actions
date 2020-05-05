@@ -47,8 +47,6 @@ jobs:
       run: |
         export NUM=$(echo $(git rev-list --count HEAD) % 200 | bc)
         echo "::set-env name=PRIORITY::$NUM"
-    # - run: sh ./prepare_cfn.sh
-    # - run: cat cfn.yml
     - name: Create PR ECS stack
       run: aws cloudformation create-stack --stack-name test-pr-ecs-$(git rev-parse --short HEAD) --template-body file://cfn.yml --parameters ParameterKey=GitSHA,ParameterValue=$(git rev-parse --short HEAD) ParameterKey=ListenerRulePriority,ParameterValue=${{env.PRIORITY}}
 
@@ -90,4 +88,4 @@ jobs:
         sudo ./aws/install
     - run: echo test-pr-ecs-$(git rev-parse --short HEAD)
     - name: Remove PR ECS stack
-      run: aws cloudformation delete-stack --stack-name test-pr-ecs-$(git rev-parse --short HEAD)
+      run: aws cloudformation delete-stack --stack-name "test-pr-ecs-$(git rev-parse --short HEAD)"

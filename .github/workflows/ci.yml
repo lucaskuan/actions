@@ -37,18 +37,10 @@ jobs:
     steps:
     - run: echo Lallalalalalalal
     - name: AWS CLI
-    #   uses: aws-actions/configure-aws-credentials@v1
-    #   with:
-    #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     aws-region: us-east-2
-    # - name: check aws cli
-    #   run: aws --version
-      # run: |
-      #   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      #   unzip awscliv2.zip
-      #   sudo ./aws/install
-      uses: cyberonin/awscli-action@master
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
     - name: check cli version
       run: aws --version
     - name: try command

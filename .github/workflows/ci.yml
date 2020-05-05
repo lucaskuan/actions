@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo Testing....
-      - run: exit 1
       - run: echo something after failed
   # This workflow contains a single job called "build"
   build:

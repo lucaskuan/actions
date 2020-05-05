@@ -1,11 +1,29 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: "Create ECS service for WS pull request"
 
+Parameters:
+  VpcId:
+    Type: String
+    Default: vpc-1ba6307c
+  MainListenerARN:
+    Type: String
+    Description: The main load balancer listener that we going to add rules into
+    Default: arn:aws:elasticloadbalancing:us-west-2:993316282153:listener/app/ed-web-Elb-K5SDEGBIWZP3/dc382608ece43558/79885aaf58de3ff8
+  ListenerRulePriority:
+    Type: Number
+    Description: Unique number from 1 to 50000 to represent rule priority in listener
+  ECSClusterName:
+    Type: String
+    Description: ECS Cluster that we are going to add service into
+    Default: staging
+  GitSHA:
+    Type: String
+    
 Resources:
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      VpcId: vpc-1ba6307c # TODO: Replace with script
+      VpcId: !Ref VpcId
       Tags:
       - Key: Name
         Value: ws-api-pr-staging
@@ -29,9 +47,9 @@ Resources:
         - Field: host-header
           HostHeaderConfig:
             Values:
-              - pr-__GIT_SHA__.workstream.is
-      ListenerArn: arn:aws:elasticloadbalancing:us-west-2:993316282153:listener/app/ed-web-Elb-K5SDEGBIWZP3/dc382608ece43558/79885aaf58de3ff8 # TODO: Replace with script
-      Priority: 6 # TODO: Replace with script, need to be unique from 1 - 50000
+              - !Sub pr-${GitSHA}.workstream.is
+      ListenerArn: !Ref MainListenerARN
+      Priority: !Ref ListenerRulePriority
 
   Ecs:
     Type: AWS::ECS::Service
@@ -39,8 +57,8 @@ Resources:
       - ListenerRule
       - TargetGroup
     Properties:
-      Cluster: staging # TODO: Replace with script
-      ServiceName: __GIT_SHA__
+      Cluster: !Ref ECSClusterName # TODO: Replace with script
+      ServiceName: !Ref GitSHA
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:

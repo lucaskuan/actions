@@ -42,11 +42,11 @@ jobs:
         unzip awscliv2.zip
         sudo ./aws/install
     - name: check cli version
-      run: aws --version
-    - run: sh ./prepare_cfn.sh
-    - run: cat cfn.yml
-    # - name: Create PR ECS stack
-      # run: aws cloudformation create-stack --stack-name $(git rev-parse --short HEAD)
+      run: git rev-parse --short HEAD
+    # - run: sh ./prepare_cfn.sh
+    # - run: cat cfn.yml
+    - name: Create PR ECS stack
+      run: aws cloudformation create-stack --stack-name $(git rev-parse --short HEAD) --template-body ./cfn.yml
 
   redeploy:
     needs: [test, build]

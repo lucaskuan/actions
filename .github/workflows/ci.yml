@@ -50,7 +50,7 @@ jobs:
     # - run: sh ./prepare_cfn.sh
     # - run: cat cfn.yml
     - name: Create PR ECS stack
-      run: aws cloudformation create-stack --stack-name test-pr-ecs-$(git rev-parse --short HEAD) --template-body ./cfn.yml --parameters ParameterKey=GitSHA,ParameterValue=$(git rev-parse --short HEAD) ParameterKey=ListenerRulePriority,ParameterValue=${{env.PRIORITY}}
+      run: aws cloudformation create-stack --stack-name test-pr-ecs-$(git rev-parse --short HEAD) --template-body file://cfn.yml --parameters ParameterKey=GitSHA,ParameterValue=$(git rev-parse --short HEAD) ParameterKey=ListenerRulePriority,ParameterValue=${{env.PRIORITY}}
 
   redeploy:
     needs: [test, build]
